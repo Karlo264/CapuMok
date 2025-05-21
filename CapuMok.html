@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CapuMok - Pastelería Saludable</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;600&display=swap');
+
+    body {
+      margin: 0;
+      font-family: 'Quicksand', sans-serif;
+      background: linear-gradient(to right, #ffe0ec, #ffe5b4);
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+    }
+
+    h1 {
+      font-family: 'Pacifico', cursive;
+      color: #d63384;
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .container {
+      max-width: 900px;
+      width: 100%;
+      background: #fff;
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 1.5rem;
+    }
+
+    button {
+      background: #ff69b4;
+      color: white;
+      border: none;
+      padding: 0.8rem 1.2rem;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #d63384;
+    }
+
+    .output {
+      background: #fefefe;
+      border: 2px dashed #ffc0cb;
+      padding: 1rem;
+      border-radius: 10px;
+      font-size: 1rem;
+      white-space: pre-wrap;
+      line-height: 1.5;
+    }
+
+    strong {
+      color: #c71585;
+    }
+  </style>
+</head>
+<body>
+  <h1>🍰 CapuMok - Pastelería Saludable</h1>
+  <div class="container">
+    <div class="buttons">
+      <button onclick="verPostres()">Ver postres saludables</button>
+      <button onclick="agregarIngrediente()">Agregar ingrediente</button>
+      <button onclick="usarIngrediente()">Usar ingrediente</button>
+      <button onclick="verInventario()">Ver inventario</button>
+      <button onclick="calcularCostos()">Calcular costos ideales</button>
+      <button onclick="agregarReceta()">Agregar nueva receta</button>
+      <button onclick="abrirTelegram()">Bot de Telegram</button>
+    </div>
+    <div id="output" class="output">Bienvenida a tu pastelería creativa y saludable. 🍓</div>
+  </div>
+
+  <script>
+    const inventario = { Harina: 2, Azúcar: 1, Huevos: 6 };
+    const postres = [{
+      nombre: "🍠 Brownie de batata sin azúcar",
+      ingredientes: {
+        "Batata cocida": "250g",
+        "Harina de almendra": "100g",
+        "Cacao amargo": "40g",
+        "Huevos": "2",
+        "Stevia líquida": "1 cda",
+        "Polvo de hornear": "1 cdita"
+      },
+      preparacion: "Mezclar todo, colocar en un molde y hornear a 180°C por 25-30 minutos."
+    }];
+
+    function verPostres() {
+      let out = "🎂 <strong>Postres saludables disponibles:</strong><br><br>";
+      postres.forEach(p => {
+        out += `🍰 <strong>${p.nombre}</strong><br>`;
+        out += "🧾 Ingredientes:<br>";
+        for (const [k, v] of Object.entries(p.ingredientes)) {
+          out += `• ${k}: ${v}<br>`;
+        }
+        out += `👩‍🍳 Preparación: ${p.preparacion}<br><br>`;
+      });
+      document.getElementById("output").innerHTML = out;
+    }
+
+    function agregarIngrediente() {
+      const ing = prompt("Nombre del ingrediente:");
+      if (!ing) return;
+      const cant = parseFloat(prompt("Cantidad a agregar:"));
+      if (isNaN(cant)) return;
+      inventario[ing] = (inventario[ing] || 0) + cant;
+      alert(`${cant} de ${ing} agregado al inventario.`);
+    }
+
+    function usarIngrediente() {
+      const ing = prompt("Nombre del ingrediente a usar:");
+      if (!ing) return;
+      const cant = parseFloat(prompt("Cantidad a usar:"));
+      if (isNaN(cant)) return;
+      if (inventario[ing] >= cant) {
+        inventario[ing] -= cant;
+        alert(`Usaste ${cant} de ${ing}.`);
+      } else {
+        alert("No hay suficiente ingrediente.");
+      }
+    }
+
+    function verInventario() {
+      let out = "📦 <strong>Inventario actual:</strong><br><br>";
+      for (const [k, v] of Object.entries(inventario)) {
+        out += `• ${k}: ${v}<br>`;
+      }
+      document.getElementById("output").innerHTML = out;
+    }
+
+    function calcularCostos() {
+      let resultado = "💰 <strong>Precios ideales:</strong><br><br>";
+      for (const ing of Object.keys(inventario)) {
+        const costo = parseFloat(prompt(`Costo por unidad de ${ing}:`));
+        if (isNaN(costo)) return;
+        const ganancia = parseFloat(prompt(`Porcentaje de ganancia para ${ing}:`));
+        if (isNaN(ganancia)) return;
+        const final = costo + (costo * ganancia / 100);
+        resultado += `${ing}: $${costo.toFixed(2)} + ${ganancia}% = <strong>$${final.toFixed(2)}</strong><br>`;
+      }
+      document.getElementById("output").innerHTML = resultado;
+    }
+
+    function agregarReceta() {
+      const nombre = prompt("Nombre del postre:");
+      if (!nombre) return;
+      const ingredientesTexto = prompt("Ingredientes (formato: nombre:cantidad separados por salto de línea o espacio):");
+      if (!ingredientesTexto) return;
+      const preparacion = prompt("Descripción/preparación:");
+      if (!preparacion) return;
+      const ingredientes = {};
+      ingredientesTexto.split(/\n|\\n|(?<=\d)\s+(?=\D)/).forEach(linea => {
+        const [ing, cant] = linea.split(":");
+        if (ing && cant) ingredientes[ing.trim()] = cant.trim();
+      });
+      postres.push({ nombre, ingredientes, preparacion });
+      alert("Receta agregada con éxito.");
+    }
+
+    function abrirTelegram() {
+      window.open("https://t.me/ClarayKarlo1122bot", "_blank");
+    }
+  </script>
+</body>
+</html>
